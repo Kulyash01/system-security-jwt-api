@@ -13,9 +13,10 @@ def login():
 
     if username == 'admin' and password == '123':
         token = jwt.encode({
-            'user': username,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-        }, app.config['SECRET_KEY'], algorithm='HS256')
+    'user': username,
+    'role': 'user',
+    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+}, app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
     return jsonify({'message': 'Invalid credentials'}), 401
 
@@ -28,7 +29,11 @@ def protected():
     token = auth_header.split(" ")[1]
 
     try:
-        jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+
+        if payload.get('role') != 'admin':
+            return jsonify({'message': 'Access forbidden: Admins only'}), 403
+
         return jsonify({'message': 'Access granted'})
     except jwt.ExpiredSignatureError:
         return jsonify({'message': 'Token expired'}), 401
