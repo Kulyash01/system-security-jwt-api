@@ -21,9 +21,12 @@ def login():
 
 @app.route('/protected', methods=['GET'])
 def protected():
-    token = request.headers.get('Authorization')
-    if not token:
-        return jsonify({'message': 'Token missing'}), 401
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({'message': 'Missing or invalid token'}), 401
+
+    token = auth_header.split(" ")[1]
+
     try:
         jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
         return jsonify({'message': 'Access granted'})
