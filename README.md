@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-# system-security-jwt-api
-System Security project for JWT-based RESTful API authentication
->>>>>>> f713d24 (Resolved merge conflict in README)
 # JWT Auth API (Flask)
 
 This is a simple REST API demonstrating JWT-based authentication using Flask.
