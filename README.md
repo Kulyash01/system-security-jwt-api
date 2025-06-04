@@ -48,5 +48,5 @@ Use the token to call a protected endpoint:
 
 ```bash
 curl http://localhost:5000/protected \
-  -H "Authorization: Bearer $TOKEN"
+  -H "Authorization: Bearer $TOKEN"   # header will be: Authorization: Bearer <token>
 ```
