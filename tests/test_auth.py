@@ -43,9 +43,12 @@ def test_token_expired(client):
 
 
 def test_role_denied(client):
-    login = client.post('/login', json={'username': 'admin', 'password': 'password'})
-    token = login.get_json()['token']
+    forbidden_token = jwt.encode({
+        'user': 'admin',
+        'role': 'guest',
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+    }, main.app.config['SECRET_KEY'], algorithm='HS256')
 
-    resp = client.get('/protected', headers={'Authorization': f'Bearer {token}'})
+    resp = client.get('/protected', headers={'Authorization': f'Bearer {forbidden_token}'})
     assert resp.status_code == 403
-    assert resp.get_json()['message'] == 'Access forbidden: Admins only'
+    assert resp.get_json()['message'] == 'Access forbidden: Admins or users only'
