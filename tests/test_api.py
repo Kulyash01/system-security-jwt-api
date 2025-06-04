@@ -1,6 +1,5 @@
 import os
 import pytest
-from werkzeug.security import generate_password_hash
 
 # Setup environment variables before importing the app
 os.environ.setdefault('SECRET_KEY', 'test-secret')
