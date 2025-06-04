@@ -73,3 +73,7 @@ GET /protected HTTP/1.1
 Host: localhost:5000
 Authorization: Bearer <token>
 ```
+
+## License
+
+This project is licensed under the terms of the [MIT License](LICENSE).
