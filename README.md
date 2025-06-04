@@ -4,6 +4,7 @@ This example demonstrates a minimal REST API using Flask and JWT-based authentic
 
 ## Features
 
+- `/register`: Create a new user with a username, password and optional role.
 - `/login`: Accepts a username and password and returns a short-lived JWT token using a predefined role.
 - `/protected`: Example endpoint that validates a JWT token and requires either the `admin` or `user` role.
 
@@ -45,6 +46,21 @@ Example credentials file:
   "password_hash": "<hashed password>",
   "role": "admin"
 }
+```
+
+## Register
+
+Create additional accounts using the `/register` endpoint. Provide a JSON body
+with a `username`, `password` and optional `role` (defaults to `user`).
+
+```bash
+curl -X POST http://127.0.0.1:5000/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "newuser",
+    "password": "newpass",
+    "role": "user"
+  }'
 ```
 
 ## Usage
