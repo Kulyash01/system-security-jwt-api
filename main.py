@@ -11,6 +11,9 @@ if not secret_key:
     raise RuntimeError("SECRET_KEY environment variable not set")
 app.config['SECRET_KEY'] = secret_key
 
+# Roles that are permitted to access protected resources
+ALLOWED_ROLES = {"admin", "user"}
+
 
 def load_credentials():
     """Load user credentials from a JSON file or environment variables."""
@@ -18,6 +21,7 @@ def load_credentials():
     username = os.environ.get('USERNAME')
     password_hash = os.environ.get('PASSWORD_HASH')
     password = os.environ.get('PASSWORD')
+    role = os.environ.get('ROLE')
 
     if cred_file and os.path.exists(cred_file):
         with open(cred_file) as f:
@@ -26,37 +30,34 @@ def load_credentials():
             password_hash = password_hash or data.get('password_hash')
             if not password_hash and data.get('password'):
                 password_hash = generate_password_hash(data['password'])
+            role = role or data.get('role')
 
     if not password_hash and password:
         password_hash = generate_password_hash(password)
 
+    if role is None:
+        role = 'admin'
+    elif role not in ALLOWED_ROLES:
+        raise RuntimeError('Invalid role')
+
     if not username or not password_hash:
         raise RuntimeError('User credentials not provided')
 
-    return username, password_hash
+    return username, password_hash, role
 
 
-STORED_USERNAME, STORED_PASSWORD_HASH = load_credentials()
-
-# Roles that are permitted to access protected resources
-ALLOWED_ROLES = {"admin", "user"}
+STORED_USERNAME, STORED_PASSWORD_HASH, STORED_ROLE = load_credentials()
 
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
-    # Validate role if provided
-    role = data.get('role')
-    if role is None:
-        role = 'admin'
-    elif role not in ALLOWED_ROLES:
-        return jsonify({'message': 'Invalid role'}), 400
-
+    # Ignore any role provided by the request and use the stored role
     if username == STORED_USERNAME and check_password_hash(STORED_PASSWORD_HASH, password):
         token = jwt.encode({
             'user': username,
-          'role': role,
+            'role': STORED_ROLE,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
         }, app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
