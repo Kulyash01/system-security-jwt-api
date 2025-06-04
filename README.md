@@ -28,6 +28,15 @@ export PASSWORD_HASH="<hashed password>"
 The credentials file (if used) should contain JSON with `username` and `password_hash` fields.
 If a plain `password` field is provided, it will be hashed on startup.
 
+Example credentials file:
+
+```json
+{
+  "username": "admin",
+  "password_hash": "<hashed password>"
+}
+```
+
 3. Run the application:
 
 ```bash
