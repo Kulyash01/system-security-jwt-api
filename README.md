@@ -16,6 +16,12 @@ This example demonstrates a minimal REST API using Flask and JWT-based authentic
 pip install -r requirements.txt
 ```
 
+For development or running the tests install the additional dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 2. (Optional) run the tests:
 
 ```bash
