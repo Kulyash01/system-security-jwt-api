@@ -47,7 +47,7 @@ def login():
     if username == STORED_USERNAME and check_password_hash(STORED_PASSWORD_HASH, password):
         token = jwt.encode({
             'user': username,
-            'role': 'user',
+            'role': 'admin',
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
         }, app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
