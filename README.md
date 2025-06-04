@@ -9,11 +9,20 @@ This is a simple REST API demonstrating JWT-based authentication using Flask.
 
 ## Usage
 
-1. Run:
+1. Start the server:
 ```bash
-python main.py{
+python main.py
+```
+
+2. Obtain a token:
+```bash
+curl -X POST http://127.0.0.1:5000/login -H "Content-Type: application/json" -d '{
   "username": "admin",
   "password": "123"
-}
+}'
+```
 
-Authorization: <token>
+3. Access the protected route with the token:
+```bash
+curl http://127.0.0.1:5000/protected -H "Authorization: Bearer <token>"
+```

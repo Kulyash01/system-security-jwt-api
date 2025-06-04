@@ -13,10 +13,10 @@ def login():
 
     if username == 'admin' and password == '123':
         token = jwt.encode({
-    'user': username,
-    'role': 'user',
-    'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
-}, app.config['SECRET_KEY'], algorithm='HS256')
+            'user': username,
+            'role': 'admin',
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
+        }, app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
     return jsonify({'message': 'Invalid credentials'}), 401
 
