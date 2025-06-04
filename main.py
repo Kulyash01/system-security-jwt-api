@@ -38,12 +38,18 @@ def load_credentials():
 
 STORED_USERNAME, STORED_PASSWORD_HASH = load_credentials()
 
+# Roles that are permitted to access protected resources
+ALLOWED_ROLES = {"admin", "user"}
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
+    # Use provided role if valid; otherwise fall back to the default "admin" role
     role = data.get('role', 'admin')
+    if role not in ALLOWED_ROLES:
+        role = 'admin'
 
     if username == STORED_USERNAME and check_password_hash(STORED_PASSWORD_HASH, password):
         token = jwt.encode({
@@ -65,7 +71,7 @@ def protected():
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
 
-        if payload.get('role') not in ('admin', 'user'):
+        if payload.get('role') not in ALLOWED_ROLES:
             return jsonify({'message': 'Access forbidden: Admins or users only'}), 403
 
         return jsonify({'message': 'Access granted'})
