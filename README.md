@@ -27,12 +27,17 @@ If a plain `password` field is provided, it will be hashed on startup.
 python main.py
 ```
 
-Send a login request:
+Send a login request and store the returned token:
 
 ```bash
-curl -X POST http://localhost:5000/login \
+TOKEN=$(curl -s -X POST http://localhost:5000/login \
   -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "your-password"}'
+  -d '{"username": "admin", "password": "your-password"}' | jq -r '.token')
 ```
 
-Use the returned token in the `Authorization` header when calling `/protected`.
+Use the token to call a protected endpoint:
+
+```bash
+curl http://localhost:5000/protected \
+  -H "Authorization: Bearer $TOKEN"
+```
