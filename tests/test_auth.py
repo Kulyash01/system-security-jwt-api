@@ -41,6 +41,18 @@ def test_login_missing_fields(client):
     assert resp.get_json()['message'] == 'Username and password required'
 
 
+def test_login_missing_username(client):
+    resp = client.post('/login', json={'password': 'password'})
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Username and password required'
+
+
+def test_login_missing_password(client):
+    resp = client.post('/login', json={'username': 'admin'})
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Username and password required'
+
+
 def test_login_non_json_payload(client):
     resp = client.post('/login', data='not json', content_type='text/plain')
     assert resp.status_code == 400
