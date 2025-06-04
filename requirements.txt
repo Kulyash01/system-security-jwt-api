@@ -1,7 +1,4 @@
 Flask
-PyJWT
-Werkzeug
-=======
 Werkzeug
 PyJWT
 pytest
