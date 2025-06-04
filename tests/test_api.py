@@ -1,10 +1,12 @@
 import os
 import pytest
+import jwt
 
 # Setup environment variables before importing the app
 os.environ.setdefault('SECRET_KEY', 'test-secret')
 os.environ.setdefault('USERNAME', 'testuser')
 os.environ.setdefault('PASSWORD', 'testpass')
+os.environ.setdefault('ROLE', 'admin')
 
 from main import app
 
@@ -30,6 +32,10 @@ def test_protected_with_valid_token(client):
     assert resp.status_code == 200
     assert resp.get_json().get('message') == 'Access granted'
 
-def test_login_invalid_role(client):
+def test_login_ignores_invalid_role(client):
     resp = client.post('/login', json={'username': 'testuser', 'password': 'testpass', 'role': 'invalid'})
-    assert resp.status_code == 400
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert 'token' in data
+    decoded = jwt.decode(data['token'], app.config['SECRET_KEY'], algorithms=['HS256'])
+    assert decoded['role'] == 'admin'

@@ -8,6 +8,7 @@ import pytest
 os.environ.setdefault('SECRET_KEY', 'test-secret')
 os.environ.setdefault('USERNAME', 'admin')
 os.environ.setdefault('PASSWORD', 'password')
+os.environ.setdefault('ROLE', 'admin')
 
 import main
 importlib.reload(main)

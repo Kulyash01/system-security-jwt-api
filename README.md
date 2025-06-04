@@ -4,7 +4,7 @@ This example demonstrates a minimal REST API using Flask and JWT-based authentic
 
 ## Features
 
-- `/login`: Accepts a username and password, returning a short-lived JWT token.
+- `/login`: Accepts a username and password and returns a short-lived JWT token using a predefined role.
 - `/protected`: Example endpoint that validates a JWT token and requires either the `admin` or `user` role.
 
 ## Setup
@@ -27,18 +27,23 @@ pytest
 export SECRET_KEY="your-secret-key"
 export USERNAME="admin"            # or use CREDENTIALS_FILE
 export PASSWORD_HASH="<hashed password>"
+export ROLE="admin"                # or use credentials file
 # Optional: export CREDENTIALS_FILE=/path/to/credentials.json
 # Optional: export FLASK_DEBUG=1   # enable Flask debug mode
 ```
 
-If you use a credentials file, it should contain JSON with `username` and `password_hash` fields. If a plain `password` field is provided, it will be hashed on startup.
+The configured role is embedded into issued tokens. Any role value supplied in a
+`/login` request is ignored.
+
+If you use a credentials file, it should contain JSON with `username`, `password_hash`, and an optional `role` field. If a plain `password` field is provided, it will be hashed on startup.
 
 Example credentials file:
 
 ```json
 {
   "username": "admin",
-  "password_hash": "<hashed password>"
+  "password_hash": "<hashed password>",
+  "role": "admin"
 }
 ```
 
