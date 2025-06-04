@@ -72,3 +72,9 @@ def test_register_missing_password(client):
     resp = client.post('/register', json={'username': 'someuser'})
     assert resp.status_code == 400
     assert resp.get_json()['message'] == 'Username and password required'
+
+
+def test_register_invalid_role(client):
+    resp = client.post('/register', json={'username': 'u', 'password': 'p', 'role': 'guest'})
+    assert resp.status_code == 400
+    assert 'Invalid role' in resp.get_json().get('message', '')
