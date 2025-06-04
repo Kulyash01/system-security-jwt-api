@@ -46,10 +46,12 @@ def login():
     data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
-    # Use provided role if valid; otherwise fall back to the default "admin" role
-    role = data.get('role', 'admin')
-    if role not in ALLOWED_ROLES:
+    # Validate role if provided
+    role = data.get('role')
+    if role is None:
         role = 'admin'
+    elif role not in ALLOWED_ROLES:
+        return jsonify({'message': 'Invalid role'}), 400
 
     if username == STORED_USERNAME and check_password_hash(STORED_PASSWORD_HASH, password):
         token = jwt.encode({
