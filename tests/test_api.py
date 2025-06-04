@@ -39,3 +39,18 @@ def test_login_ignores_invalid_role(client):
     assert 'token' in data
     decoded = jwt.decode(data['token'], app.config['SECRET_KEY'], algorithms=['HS256'])
     assert decoded['role'] == 'admin'
+
+
+def test_register_and_login_new_user(client):
+    resp = client.post('/register', json={'username': 'newuser', 'password': 'newpass', 'role': 'user'})
+    assert resp.status_code == 201
+    assert resp.get_json()['message'] == 'User registered'
+
+    login_resp = client.post('/login', json={'username': 'newuser', 'password': 'newpass'})
+    assert login_resp.status_code == 200
+    assert 'token' in login_resp.get_json()
+
+
+def test_register_existing_user(client):
+    resp = client.post('/register', json={'username': 'testuser', 'password': 'another'})
+    assert resp.status_code == 400

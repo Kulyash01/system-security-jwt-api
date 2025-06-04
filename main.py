@@ -48,16 +48,51 @@ def load_credentials():
 
 STORED_USERNAME, STORED_PASSWORD_HASH, STORED_ROLE = load_credentials()
 
+# In-memory store of registered users. Starts with the credentials loaded from
+# the environment or credential file.
+USERS = {
+    STORED_USERNAME: {
+        'password_hash': STORED_PASSWORD_HASH,
+        'role': STORED_ROLE,
+    }
+}
+
+
+@app.route('/register', methods=['POST'])
+def register():
+    """Register a new user with a username, password and optional role."""
+    data = request.get_json() or {}
+    username = data.get('username')
+    password = data.get('password')
+    role = data.get('role', 'user')
+
+    if not username or not password:
+        return jsonify({'message': 'Username and password required'}), 400
+
+    if username in USERS:
+        return jsonify({'message': 'User already exists'}), 400
+
+    if role not in ALLOWED_ROLES:
+        return jsonify({'message': 'Invalid role'}), 400
+
+    USERS[username] = {
+        'password_hash': generate_password_hash(password),
+        'role': role,
+    }
+
+    return jsonify({'message': 'User registered'}), 201
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
-    # Ignore any role provided by the request and use the stored role
-    if username == STORED_USERNAME and check_password_hash(STORED_PASSWORD_HASH, password):
+    user = USERS.get(username)
+    # Ignore any role provided by the request and use the stored role for the user
+    if user and check_password_hash(user['password_hash'], password):
         token = jwt.encode({
             'user': username,
-            'role': STORED_ROLE,
+            'role': user['role'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
         }, app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
