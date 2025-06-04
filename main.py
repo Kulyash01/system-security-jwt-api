@@ -40,14 +40,15 @@ STORED_USERNAME, STORED_PASSWORD_HASH = load_credentials()
 
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
+    role = data.get('role', 'admin')
 
     if username == STORED_USERNAME and check_password_hash(STORED_PASSWORD_HASH, password):
         token = jwt.encode({
             'user': username,
-            'role': 'admin',
+            'role': role,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
         }, app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
@@ -64,8 +65,8 @@ def protected():
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
 
-        if payload.get('role') != 'admin':
-            return jsonify({'message': 'Access forbidden: Admins only'}), 403
+        if payload.get('role') not in ('admin', 'user'):
+            return jsonify({'message': 'Access forbidden: Admins or users only'}), 403
 
         return jsonify({'message': 'Access granted'})
     except jwt.ExpiredSignatureError:
