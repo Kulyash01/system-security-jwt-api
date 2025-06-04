@@ -84,9 +84,16 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
+    if not request.is_json:
+        return jsonify({'message': 'Invalid or missing JSON payload'}), 400
+
     data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
+
+    if not username or not password:
+        return jsonify({'message': 'Username and password required'}), 400
+
     user = USERS.get(username)
     # Ignore any role provided by the request and use the stored role for the user
     if user and check_password_hash(user['password_hash'], password):

@@ -31,6 +31,22 @@ def test_login_invalid_credentials(client):
     assert resp.get_json()['message'] == 'Invalid credentials'
 
 
+def test_login_missing_fields(client):
+    resp = client.post('/login', json={'username': 'admin'})
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Username and password required'
+
+    resp = client.post('/login', json={'password': 'password'})
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Username and password required'
+
+
+def test_login_non_json_payload(client):
+    resp = client.post('/login', data='not json', content_type='text/plain')
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Invalid or missing JSON payload'
+
+
 def test_token_expired(client):
     expired_token = jwt.encode({
         'user': 'admin',
