@@ -50,3 +50,11 @@ Use the token to call a protected endpoint:
 curl http://localhost:5000/protected \
   -H "Authorization: Bearer $TOKEN"   # header will be: Authorization: Bearer <token>
 ```
+
+Example raw HTTP request:
+
+```http
+GET /protected HTTP/1.1
+Host: localhost:5000
+Authorization: Bearer <token>
+```
