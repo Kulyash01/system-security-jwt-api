@@ -103,6 +103,10 @@ Host: localhost:5000
 Authorization: Bearer <token>
 ```
 
+## Security, Performance, and Scalability
+
+See [SECURITY.md](SECURITY.md) for guidelines on benchmarking the API, managing tokens, password hashing, and scaling the service.
+
 ## License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
