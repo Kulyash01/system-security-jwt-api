@@ -61,7 +61,13 @@ USERS = {
 @app.route('/register', methods=['POST'])
 def register():
     """Register a new user with a username, password and optional role."""
-    data = request.get_json() or {}
+    if not request.is_json:
+        return jsonify({'message': 'Invalid JSON payload'}), 400
+
+    data = request.get_json(silent=True)
+    if data is None:
+        return jsonify({'message': 'Invalid JSON payload'}), 400
+
     username = data.get('username')
     password = data.get('password')
     role = data.get('role', 'user')

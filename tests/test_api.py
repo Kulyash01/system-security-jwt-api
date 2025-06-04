@@ -54,3 +54,21 @@ def test_register_and_login_new_user(client):
 def test_register_existing_user(client):
     resp = client.post('/register', json={'username': 'testuser', 'password': 'another'})
     assert resp.status_code == 400
+
+
+def test_register_invalid_json(client):
+    resp = client.post('/register', data='not json', content_type='text/plain')
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Invalid JSON payload'
+
+
+def test_register_missing_username(client):
+    resp = client.post('/register', json={'password': 'somepass'})
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Username and password required'
+
+
+def test_register_missing_password(client):
+    resp = client.post('/register', json={'username': 'someuser'})
+    assert resp.status_code == 400
+    assert resp.get_json()['message'] == 'Username and password required'
