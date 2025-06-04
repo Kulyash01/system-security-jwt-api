@@ -74,5 +74,7 @@ def protected():
         return jsonify({'message': 'Invalid token'}), 401
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_env = os.environ.get('FLASK_DEBUG', '0')
+    debug_mode = debug_env.lower() in ('1', 'true', 't', 'yes')
+    app.run(debug=debug_mode)
 
