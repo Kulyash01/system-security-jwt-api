@@ -18,6 +18,24 @@ pytest
 
 ## Usage
 
+1. Start the server:
+```bash
+python main.py
+```
+
+2. Obtain a token:
+```bash
+curl -X POST http://127.0.0.1:5000/login -H "Content-Type: application/json" -d '{
+  "username": "admin",
+  "password": "123"
+}'
+```
+
+3. Access the protected route with the token:
+```bash
+curl http://127.0.0.1:5000/protected -H "Authorization: Bearer <token>"
+```
+=======
 1. Install dependencies:
 
 ```bash
@@ -83,3 +101,4 @@ Authorization: Bearer <token>
 ## License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
+
