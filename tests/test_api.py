@@ -1,6 +1,5 @@
 import os
 import pytest
-from werkzeug.security import generate_password_hash
 
 # Setup environment variables before importing the app
 os.environ.setdefault('SECRET_KEY', 'test-secret')
@@ -30,3 +29,7 @@ def test_protected_with_valid_token(client):
     resp = client.get('/protected', headers={'Authorization': f'Bearer {token}'})
     assert resp.status_code == 200
     assert resp.get_json().get('message') == 'Access granted'
+
+def test_login_invalid_role(client):
+    resp = client.post('/login', json={'username': 'testuser', 'password': 'testpass', 'role': 'invalid'})
+    assert resp.status_code == 400
