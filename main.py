@@ -38,16 +38,25 @@ def load_credentials():
 
 STORED_USERNAME, STORED_PASSWORD_HASH = load_credentials()
 
+# Roles that are permitted to access protected resources
+ALLOWED_ROLES = {"admin", "user"}
+
 @app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
+    data = request.get_json() or {}
     username = data.get('username')
     password = data.get('password')
+    # Validate role if provided
+    role = data.get('role')
+    if role is None:
+        role = 'admin'
+    elif role not in ALLOWED_ROLES:
+        return jsonify({'message': 'Invalid role'}), 400
 
     if username == STORED_USERNAME and check_password_hash(STORED_PASSWORD_HASH, password):
         token = jwt.encode({
             'user': username,
-            'role': 'user',
+          'role': role,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
         }, app.config['SECRET_KEY'], algorithm='HS256')
         return jsonify({'token': token})
@@ -64,8 +73,8 @@ def protected():
     try:
         payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
 
-        if payload.get('role') != 'admin':
-            return jsonify({'message': 'Access forbidden: Admins only'}), 403
+        if payload.get('role') not in ALLOWED_ROLES:
+            return jsonify({'message': 'Access forbidden: Admins or users only'}), 403
 
         return jsonify({'message': 'Access granted'})
     except jwt.ExpiredSignatureError:
@@ -74,5 +83,7 @@ def protected():
         return jsonify({'message': 'Invalid token'}), 401
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_env = os.environ.get('FLASK_DEBUG', '0')
+    debug_mode = debug_env.lower() in ('1', 'true', 't', 'yes')
+    app.run(debug=debug_mode)
 
