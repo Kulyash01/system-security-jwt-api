@@ -5,7 +5,7 @@ This example demonstrates a minimal REST API using Flask and JWT-based authentic
 ## Features
 
 - `/login`: Accepts a username and password, returning a short-lived JWT token.
-- `/protected`: Example endpoint that validates a JWT token and requires the `admin` role.
+- `/protected`: Example endpoint that validates a JWT token and requires either the `admin` or `user` role.
 
 ## Development and Testing
 
