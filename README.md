@@ -9,7 +9,13 @@ This example demonstrates a minimal REST API using Flask and JWT-based authentic
 
 ## Usage
 
-1. Set required environment variables:
+1. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Set required environment variables:
 
 ```bash
 export SECRET_KEY="your-secret-key"
@@ -21,7 +27,7 @@ export PASSWORD_HASH="<hashed password>"
 The credentials file (if used) should contain JSON with `username` and `password_hash` fields.
 If a plain `password` field is provided, it will be hashed on startup.
 
-2. Run the application:
+3. Run the application:
 
 ```bash
 python main.py
