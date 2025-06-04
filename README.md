@@ -17,3 +17,11 @@ python main.py{
 }
 
 Authorization: <token>
+```
+
+Before running `main.py`, set the `SECRET_KEY` environment variable:
+
+```bash
+export SECRET_KEY="your-secret-key"
+python main.py
+```
